@@ -1,0 +1,46 @@
+# Esqueleto de pipeline Codemagic para a Fase 0 do plano.
+# Ajustar os placeholders (integração do App Store Connect, grupo do TestFlight)
+# depois de criar a conta na Codemagic e conectar a Apple Developer Program.
+# Docs: https://docs.codemagic.io/yaml-basic-configuration/yaml-getting-started/
+
+workflows:
+  ios-testflight:
+    name: WorkoutTracker - iOS - TestFlight
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+      vars:
+        XCODE_PROJECT: "WorkoutTracker.xcodeproj"
+        XCODE_SCHEME: "WorkoutTracker"
+        BUNDLE_ID: "com.rafaellacerda.workouttracker"
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.rafaellacerda.workouttracker
+    integrations:
+      # Nome da integração criada em Codemagic > Teams > Integrations > App Store Connect.
+      app_store_connect: appstore_connect_integration
+    scripts:
+      - name: Instalar XcodeGen
+        script: |
+          brew install xcodegen
+      - name: Gerar projeto Xcode a partir do project.yml
+        script: |
+          xcodegen generate
+      - name: Configurar assinatura de código
+        script: |
+          xcode-project use-profiles
+      - name: Build do .ipa para distribuição
+        script: |
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        beta_groups:
+          # Nome do grupo interno de testers criado no App Store Connect.
+          - "Internos"

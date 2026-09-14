@@ -1,0 +1,27 @@
+# Projeto Xcode é GERADO pelo XcodeGen a partir do project.yml — nunca versionar.
+# Regenerar com `xcodegen generate` (roda no runner de CI, não localmente no Windows).
+*.xcodeproj
+*.xcworkspace
+
+# Build artifacts
+DerivedData/
+build/
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# CocoaPods (caso venha a ser adotado no futuro)
+Pods/
+
+# macOS
+.DS_Store
+
+# Segredos / assinatura de código — nunca commitar
+.env
+*.p12
+*.mobileprovision
+*.cer
