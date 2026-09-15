@@ -57,7 +57,13 @@
 html,
 body {
   margin: 0;
-  overflow-x: hidden;
+  height: 100%;
+  /* A página inteira nunca rola nem "bounca" (overscroll elástico do iOS) —
+     só a área de conteúdo (.app-content) rola, por conta própria. Isso evita
+     o bug clássico do iOS onde elementos position:fixed se descolam da tela
+     durante o bounce de rolagem elástica. */
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body {
@@ -67,6 +73,10 @@ body {
   color: var(--text-primary);
 }
 
+#root {
+  height: 100%;
+}
+
 input,
 select,
 button {
@@ -74,29 +84,31 @@ button {
 }
 
 .app-shell {
-  /* --app-height é medido via JS (window.innerHeight) e serve de reforço:
-     no primeiro carregamento de um PWA no iOS, 100dvh às vezes calcula
-     errado antes da interface do sistema assentar. */
-  min-height: var(--app-height, 100dvh);
+  /* Altura fixa (não min-height): o shell inteiro cabe exatamente na tela,
+     e só .app-content rola dentro dele. --app-height (via JS) reforça o
+     100dvh, que às vezes calcula errado no primeiro paint de um PWA
+     recém-aberto no iOS. */
+  height: var(--app-height, 100dvh);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .app-content {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   padding: 1rem;
   padding-top: calc(env(safe-area-inset-top) + 1rem);
-  padding-bottom: calc(72px + env(safe-area-inset-bottom));
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
 }
 
 .tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  flex-shrink: 0;
   display: flex;
   border-top: 1px solid var(--border);
   background: color-mix(in srgb, var(--surface-1) 88%, transparent);
