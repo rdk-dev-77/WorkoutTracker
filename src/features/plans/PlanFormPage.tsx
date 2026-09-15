@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../../db";
 import { DIAS_DA_SEMANA, DIA_LABEL, type DiaDaSemana, type Exercise } from "../../types";
+import ExercisePicker from "./ExercisePicker";
 
 function novoExercicio(): Exercise {
   return { id: crypto.randomUUID(), nome: "", seriesAlvo: 3, repsAlvoTexto: "8-12" };
@@ -89,10 +90,9 @@ export default function PlanFormPage() {
       <h2>Exercícios</h2>
       {exercicios.map((ex) => (
         <div className="exercise-row" key={ex.id}>
-          <input
+          <ExercisePicker
             value={ex.nome}
-            onChange={(e) => atualizarExercicio(ex.id, { nome: e.target.value })}
-            placeholder="Nome do exercício"
+            onChange={(nome) => atualizarExercicio(ex.id, { nome })}
           />
           <input
             type="number"
