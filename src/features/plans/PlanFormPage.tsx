@@ -3,6 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../../db";
 import { DIAS_DA_SEMANA, DIA_LABEL, type DiaDaSemana, type Exercise } from "../../types";
 import ExercisePicker from "./ExercisePicker";
+import { useToast } from "../../Toast";
+import Spinner from "../../Spinner";
+import { IconTrash } from "../../icons";
 
 function novoExercicio(): Exercise {
   return { id: crypto.randomUUID(), nome: "", seriesAlvo: 3, repsAlvoTexto: "8-12" };
@@ -11,6 +14,7 @@ function novoExercicio(): Exercise {
 export default function PlanFormPage() {
   const { planId } = useParams();
   const navigate = useNavigate();
+  const showToast = useToast();
   const editando = Boolean(planId);
 
   const [nome, setNome] = useState("");
@@ -30,7 +34,7 @@ export default function PlanFormPage() {
     });
   }, [planId]);
 
-  if (!carregado) return null;
+  if (!carregado) return <Spinner />;
 
   function atualizarExercicio(id: string, patch: Partial<Exercise>) {
     setExercicios((prev) => prev.map((ex) => (ex.id === id ? { ...ex, ...patch } : ex)));
@@ -49,12 +53,14 @@ export default function PlanFormPage() {
       exercicios: exerciciosValidos,
     };
     await db.plans.put(plan);
+    showToast(editando ? "Treino atualizado" : "Treino criado");
     navigate("/");
   }
 
   async function excluir() {
     if (!planId) return;
     await db.plans.delete(planId);
+    showToast("Treino excluído");
     navigate("/");
   }
 
@@ -115,7 +121,7 @@ export default function PlanFormPage() {
             onClick={() => removerExercicio(ex.id)}
             aria-label="Remover exercício"
           >
-            ✕
+            <IconTrash size={16} />
           </button>
         </div>
       ))}

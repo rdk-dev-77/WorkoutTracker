@@ -4,21 +4,24 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../../db";
 import { DIAS_DA_SEMANA, DIA_LABEL } from "../../types";
 import { exportBackup, importBackup } from "../../backup";
+import { useToast } from "../../Toast";
+import Spinner from "../../Spinner";
 
 export default function PlansPage() {
   const plans = useLiveQuery(() => db.plans.toArray(), []);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const showToast = useToast();
 
   async function onImportFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
     await importBackup(file);
-    alert("Backup importado.");
+    showToast("Backup importado");
   }
 
   if (plans === undefined) {
-    return null;
+    return <Spinner />;
   }
 
   const porDia = DIAS_DA_SEMANA.map((dia) => ({
@@ -79,7 +82,14 @@ export default function PlansPage() {
           perder o histórico.
         </p>
         <div className="row" style={{ gap: "0.5rem" }}>
-          <button type="button" className="btn btn-block" onClick={() => exportBackup()}>
+          <button
+            type="button"
+            className="btn btn-block"
+            onClick={() => {
+              exportBackup();
+              showToast("Backup exportado");
+            }}
+          >
             Exportar
           </button>
           <button

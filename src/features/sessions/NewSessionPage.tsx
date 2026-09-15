@@ -3,6 +3,9 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../../db";
 import type { Exercise, SetEntry, WorkoutPlan } from "../../types";
+import { useToast } from "../../Toast";
+import Spinner from "../../Spinner";
+import { IconX } from "../../icons";
 
 type EmAndamento = Record<string, SetEntry[]>; // exerciseId -> sets
 
@@ -20,7 +23,7 @@ export default function NewSessionPage() {
 }
 
 function EscolherPlano({ plans }: { plans: WorkoutPlan[] | undefined }) {
-  if (plans === undefined) return null;
+  if (plans === undefined) return <Spinner />;
 
   return (
     <div>
@@ -51,6 +54,7 @@ function EscolherPlano({ plans }: { plans: WorkoutPlan[] | undefined }) {
 
 function RegistrarSessao({ planId }: { planId: string }) {
   const navigate = useNavigate();
+  const showToast = useToast();
   const [plan, setPlan] = useState<WorkoutPlan | null | undefined>(undefined);
   const [sets, setSets] = useState<EmAndamento>({});
   const [salvando, setSalvando] = useState(false);
@@ -64,7 +68,7 @@ function RegistrarSessao({ planId }: { planId: string }) {
     [sets],
   );
 
-  if (plan === undefined) return null;
+  if (plan === undefined) return <Spinner />;
   if (plan === null) {
     return <div className="empty-state">Treino não encontrado.</div>;
   }
@@ -107,6 +111,7 @@ function RegistrarSessao({ planId }: { planId: string }) {
       planNome: plan.nome,
       entries,
     });
+    showToast("Sessão salva");
     navigate("/");
   }
 
@@ -180,7 +185,7 @@ function ExercicioCard({
                 aria-label="Remover série"
                 style={{ minHeight: 28, minWidth: 28 }}
               >
-                ✕
+                <IconX size={14} />
               </button>
             </div>
           ))}

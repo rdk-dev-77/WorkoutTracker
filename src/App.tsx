@@ -1,28 +1,33 @@
-import { HashRouter, Routes, Route, NavLink, Outlet, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, NavLink, Outlet, Navigate, useLocation } from "react-router-dom";
 import PlansPage from "./features/plans/PlansPage";
 import PlanFormPage from "./features/plans/PlanFormPage";
 import NewSessionPage from "./features/sessions/NewSessionPage";
 import EvolutionPage from "./features/evolution/EvolutionPage";
+import { IconDumbbell, IconPlusCircle, IconTrendingUp } from "./icons";
 
 function navClass({ isActive }: { isActive: boolean }) {
   return isActive ? "tab-link tab-link-active" : "tab-link";
 }
 
 function Layout() {
+  const location = useLocation();
   return (
     <div className="app-shell">
-      <div className="app-content">
+      <div className="app-content route-fade" key={location.pathname}>
         <Outlet />
       </div>
       <nav className="tab-bar">
         <NavLink to="/" end className={navClass}>
-          Treinos
+          <IconDumbbell size={22} />
+          <span>Treinos</span>
         </NavLink>
         <NavLink to="/sessao/nova" className={navClass}>
-          Registrar
+          <IconPlusCircle size={22} />
+          <span>Registrar</span>
         </NavLink>
         <NavLink to="/evolucao" className={navClass}>
-          Evolução
+          <IconTrendingUp size={22} />
+          <span>Evolução</span>
         </NavLink>
       </nav>
     </div>

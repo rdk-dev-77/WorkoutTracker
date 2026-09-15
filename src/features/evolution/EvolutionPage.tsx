@@ -4,6 +4,7 @@ import { db } from "../../db";
 import ExercisePanel from "./ExercisePanel";
 import FrequencyPanel from "./FrequencyPanel";
 import ComparisonPanel from "./ComparisonPanel";
+import Spinner from "../../Spinner";
 
 type Secao = "exercicio" | "frequencia" | "comparar";
 
@@ -12,7 +13,7 @@ export default function EvolutionPage() {
   const sessions = useLiveQuery(() => db.sessions.orderBy("data").toArray(), []);
   const [secao, setSecao] = useState<Secao>("exercicio");
 
-  if (plans === undefined || sessions === undefined) return null;
+  if (plans === undefined || sessions === undefined) return <Spinner />;
 
   return (
     <div>
