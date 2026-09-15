@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
-import { CATALOGO_EXERCICIOS } from "../../exerciseCatalog";
+import { CATALOGO_EXERCICIOS, type ExercicioCatalogo } from "../../exerciseCatalog";
+import { GroupDot, BrandBadge } from "../../muscleGroups";
 
 function normalizar(s: string): string {
   return s
@@ -8,13 +9,23 @@ function normalizar(s: string): string {
     .toLowerCase();
 }
 
+export interface ExercicioEscolhido {
+  nome: string;
+  marca?: string;
+  grupo?: string;
+}
+
 export default function ExercisePicker({
   value,
+  marca,
+  grupo,
   onChange,
   placeholder,
 }: {
   value: string;
-  onChange: (nome: string) => void;
+  marca?: string;
+  grupo?: string;
+  onChange: (escolhido: ExercicioEscolhido) => void;
   placeholder?: string;
 }) {
   const [aberto, setAberto] = useState(false);
@@ -28,8 +39,8 @@ export default function ExercisePicker({
     return lista.slice(0, 8);
   }, [value]);
 
-  function escolher(nome: string) {
-    onChange(nome);
+  function escolher(ex: ExercicioCatalogo) {
+    onChange({ nome: ex.nome, marca: ex.marca, grupo: ex.grupo });
     setAberto(false);
     inputRef.current?.blur();
   }
@@ -40,7 +51,7 @@ export default function ExercisePicker({
         ref={inputRef}
         value={value}
         onChange={(e) => {
-          onChange(e.target.value);
+          onChange({ nome: e.target.value, marca: undefined, grupo: undefined });
           setAberto(true);
         }}
         onFocus={() => setAberto(true)}
@@ -48,18 +59,29 @@ export default function ExercisePicker({
         placeholder={placeholder ?? "Nome do exercício"}
         autoComplete="off"
       />
+      {(marca || grupo) && !aberto && (
+        <div className="exercise-picker-meta">
+          <GroupDot grupo={grupo} size={7} />
+          {grupo && <span className="muted">{grupo}</span>}
+          <BrandBadge marca={marca} />
+        </div>
+      )}
       {aberto && sugestoes.length > 0 && (
         <div className="exercise-picker-list">
-          {sugestoes.map((ex) => (
+          {sugestoes.map((ex, i) => (
             <button
               type="button"
-              key={ex.nome}
+              key={`${ex.nome}-${ex.marca ?? "generico"}-${i}`}
               className="exercise-picker-item"
               onMouseDown={(e) => e.preventDefault()}
-              onClick={() => escolher(ex.nome)}
+              onClick={() => escolher(ex)}
             >
               <span>{ex.nome}</span>
-              <span className="muted">{ex.grupo}</span>
+              <span className="exercise-picker-item-meta">
+                <GroupDot grupo={ex.grupo} size={7} />
+                <span className="muted">{ex.grupo}</span>
+                <BrandBadge marca={ex.marca} />
+              </span>
             </button>
           ))}
         </div>

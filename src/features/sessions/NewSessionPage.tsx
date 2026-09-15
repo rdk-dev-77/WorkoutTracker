@@ -6,6 +6,7 @@ import type { Exercise, SetEntry, WorkoutPlan } from "../../types";
 import { useToast } from "../../Toast";
 import Spinner from "../../Spinner";
 import { IconX } from "../../icons";
+import { GroupDot, BrandBadge } from "../../muscleGroups";
 
 type EmAndamento = Record<string, SetEntry[]>; // exerciseId -> sets
 
@@ -166,7 +167,11 @@ function ExercicioCard({
 
   return (
     <div className="card">
-      <div style={{ fontWeight: 600 }}>{exercicio.nome}</div>
+      <div className="exercise-card-title">
+        <GroupDot grupo={exercicio.grupo} />
+        <span style={{ fontWeight: 600 }}>{exercicio.nome}</span>
+        <BrandBadge marca={exercicio.marca} />
+      </div>
       <div className="muted">
         Alvo: {exercicio.seriesAlvo} séries de {exercicio.repsAlvoTexto}
       </div>

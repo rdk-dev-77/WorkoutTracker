@@ -25,6 +25,8 @@ export interface Exercise {
   nome: string;
   seriesAlvo: number;
   repsAlvoTexto: string;
+  marca?: string;
+  grupo?: string;
 }
 
 export interface WorkoutPlan {

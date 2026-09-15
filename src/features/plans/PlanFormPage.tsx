@@ -98,7 +98,9 @@ export default function PlanFormPage() {
         <div className="exercise-row" key={ex.id}>
           <ExercisePicker
             value={ex.nome}
-            onChange={(nome) => atualizarExercicio(ex.id, { nome })}
+            marca={ex.marca}
+            grupo={ex.grupo}
+            onChange={(escolhido) => atualizarExercicio(ex.id, escolhido)}
           />
           <input
             type="number"
