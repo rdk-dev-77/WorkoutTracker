@@ -74,7 +74,10 @@ button {
 }
 
 .app-shell {
-  min-height: 100dvh;
+  /* --app-height é medido via JS (window.innerHeight) e serve de reforço:
+     no primeiro carregamento de um PWA no iOS, 100dvh às vezes calcula
+     errado antes da interface do sistema assentar. */
+  min-height: var(--app-height, 100dvh);
   display: flex;
   flex-direction: column;
 }

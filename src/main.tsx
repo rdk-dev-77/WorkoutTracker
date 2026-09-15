@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import { ToastProvider } from "./Toast";
+import { registerSW } from "./registerSW";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
@@ -12,14 +13,13 @@ createRoot(document.getElementById("root")!).render(
   </StrictMode>,
 );
 
-// PWAs instalados no iOS podem ficar "presos" numa versão antiga do service
-// worker por muito tempo, já que o app raramente é totalmente recarregado
-// (só sai/volta de background). Forçar uma checagem de atualização toda vez
-// que o app volta a ficar visível resolve isso.
-if ("serviceWorker" in navigator) {
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      navigator.serviceWorker.getRegistration().then((reg) => reg?.update());
-    }
-  });
+registerSW();
+
+// Reforço para o bug de 100dvh calculando errado no primeiro paint de um
+// PWA recém-aberto no iOS (ver comentário em .app-shell no index.css).
+function ajustarAlturaReal() {
+  document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
 }
+ajustarAlturaReal();
+window.addEventListener("resize", ajustarAlturaReal);
+window.addEventListener("orientationchange", ajustarAlturaReal);

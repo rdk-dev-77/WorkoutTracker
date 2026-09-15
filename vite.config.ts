@@ -12,6 +12,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      injectRegister: null, // registro manual em src/registerSW.ts (controla updateViaCache)
       includeAssets: ["apple-touch-icon.png"],
       manifest: {
         name: "WorkoutTracker",
