@@ -4,7 +4,6 @@ import PlanFormPage from "./features/plans/PlanFormPage";
 import NewSessionPage from "./features/sessions/NewSessionPage";
 import EvolutionPage from "./features/evolution/EvolutionPage";
 import { IconDumbbell, IconPlusCircle, IconTrendingUp } from "./icons";
-import DebugPanel from "./DebugPanel";
 
 function navClass({ isActive }: { isActive: boolean }) {
   return isActive ? "tab-link tab-link-active" : "tab-link";
@@ -14,7 +13,6 @@ function Layout() {
   const location = useLocation();
   return (
     <div className="app-shell">
-      <DebugPanel />
       <div className="app-content route-fade" key={location.pathname}>
         <Outlet />
       </div>
